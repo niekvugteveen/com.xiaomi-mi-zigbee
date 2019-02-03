@@ -2,7 +2,7 @@
 
 const ZigBeeLightDevice = require('homey-meshdriver').ZigBeeLightDevice;
 
-class AqaraTunableBulb extends ZigBeeLightDevice {
+class AqaraTunableBulb extends ZigBeeXYLightDevice {
 
 	async onMeshInit() {
 
