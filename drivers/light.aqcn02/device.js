@@ -1,6 +1,6 @@
 'use strict';
 
-const ZigBeeLightDevice = require('homey-meshdriver').ZigBeeLightDevice;
+const ZigBeeXYLightDevice = require('homey-meshdriver').ZigBeeXYLightDevice;
 
 class AqaraTunableBulb extends ZigBeeXYLightDevice {
 
