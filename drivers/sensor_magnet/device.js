@@ -1,6 +1,7 @@
 'use strict';
 
 const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
+const Homey = require('homey');
 
 class XiaomiDoorWindowSensor extends ZigBeeDevice {
 	onMeshInit() {
@@ -25,7 +26,14 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
 
 	onContactReport(data) {
 		this.log(`alarm_contact -> ${data === 1}`);
+		
 		this.setCapabilityValue('alarm_contact', data === 1);
+		let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
+		changeStateTrigger
+		.register()
+		.trigger(this)
+		.catch( this.error )
+		.then( this.log )
 	}
 
 }
