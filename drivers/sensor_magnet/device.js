@@ -1,8 +1,6 @@
 'use strict';
 
-const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
-const Homey = require('homey');
-
+const { ZigBeeDevice } = require('homey-meshdriver');
 
 class XiaomiDoorWindowSensor extends ZigBeeDevice {
 
@@ -21,19 +19,6 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
         this.error('failed to register attr report listener - genOnOff - Contact', err);
       });
 
-  	onContactReport(data) {
-  		this.log(`alarm_contact -> ${data === 1}`);
-
-      // liste for contactalarm on/off event
-  		this.setCapabilityValue('alarm_contact', data === 1);
-  		let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
-  		changeStateTrigger
-  		.register()
-  		.trigger(this)
-  		.catch( this.error )
-  		.then( this.log )
-  	}
-
     this.registerAttrReportListener('genBasic', '65281', 1, 60, null, data => {
       this.log('65281', data);
     }, 0);
@@ -44,7 +29,15 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
     const parsedData = !reverseAlarmLogic ? data === 1 : data === 0;
     this.log(`alarm_contact -> ${parsedData}`);
     this.setCapabilityValue('alarm_contact', parsedData);
+
+    let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
+    changeStateTrigger
+    .register()
+    .trigger(this)
+    .catch( this.error )
+    .then( this.log )
   }
+
 }
 
 module.exports = XiaomiDoorWindowSensor;
@@ -82,7 +75,6 @@ Node overview
 2017-10-21 00:55:34 [log] [ManagerDrivers] [sensor_magnet] [0] ---- cid : manuSpecificCluster
 2017-10-21 00:55:34 [log] [ManagerDrivers] [sensor_magnet] [0] ---- sid : attrs
 2017-10-21 00:55:34 [log] [ManagerDrivers] [sensor_magnet] [0] ------------------------------------------
-
 65281 - 0xFF01 report:
 Not reported
 */
