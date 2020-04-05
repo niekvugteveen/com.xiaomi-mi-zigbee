@@ -1,97 +1,102 @@
-//lifeline validated
+// lifeline validated
+
 'use strict';
 
+const { ZigBeeDevice } = require('homey-meshdriver');
 const util = require('./../../lib/util');
-const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
 
 class AqaraWeatherSensor extends ZigBeeDevice {
-	onMeshInit() {
 
-		// enable debugging
-		// this.enableDebug();
+  onMeshInit() {
+    // enable debugging
+    // this.enableDebug();
 
-		// print the node's info to the console
-		// this.printNode();
+    // print the node's info to the console
+    // this.printNode();
 
-		//Link util parseData method to this devices instance
-		this.parseData = util.parseData.bind(this)
+    // Link util parseData method to this devices instance
+    this.parseData = util.parseData.bind(this);
 
-		// Register the AttributeReportListener
-		this.registerAttrReportListener('msTemperatureMeasurement', 'measuredValue', 1, 60, null,
-				this.onTemperatureReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - msTemperatureMeasurement', err);
-			});
+    // Register the AttributeReportListener
+    this.registerAttrReportListener('msTemperatureMeasurement', 'measuredValue', 1, 60, null,
+      this.onTemperatureReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - msTemperatureMeasurement', err);
+      });
 
-		// Register the AttributeReportListener
-		this.registerAttrReportListener('msRelativeHumidity', 'measuredValue', 1, 60, null,
-				this.onHumidityReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - msRelativeHumidity', err);
-			});
+    // Register the AttributeReportListener
+    this.registerAttrReportListener('msRelativeHumidity', 'measuredValue', 1, 60, null,
+      this.onHumidityReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - msRelativeHumidity', err);
+      });
 
-		// Register the AttributeReportListener
-		this.registerAttrReportListener('msPressureMeasurement', '16', 1, 60, null,
-				this.onPressureReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - msPressureMeasurement', err);
-			});
+    // Register the AttributeReportListener
+    this.registerAttrReportListener('msPressureMeasurement', '16', 1, 60, null,
+      this.onPressureReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - msPressureMeasurement', err);
+      });
 
-		// Register the AttributeReportListener - Lifeline
-		this.registerAttrReportListener('genBasic', '65281', 1, 60, null,
-				this.onLifelineReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - genBasic - Lifeline', err);
-			});
-	}
+    // Register the AttributeReportListener - Lifeline
+    this.registerAttrReportListener('genBasic', '65281', 1, 60, null,
+      this.onLifelineReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - genBasic - Lifeline', err);
+      });
+  }
 
-	onTemperatureReport(value) {
-		const parsedValue = this.getSetting('temperature_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
-		// const parsedValue = Math.round((value / 100) * 10) / 10;
-		const temperatureOffset = this.getSetting('temperature_offset') || 0;
-		this.log('msTemperatureMeasurement - measuredValue (temperature):', parsedValue, '+ temperature offset', temperatureOffset);
-		this.setCapabilityValue('measure_temperature', parsedValue + temperatureOffset);
-	}
+  onTemperatureReport(value) {
+    const parsedValue = this.getSetting('temperature_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
+    if (parsedValue !== -100) {
+      // const parsedValue = Math.round((value / 100) * 10) / 10;
+      const temperatureOffset = this.getSetting('temperature_offset') || 0;
+      this.log('measure_temperature | msTemperatureMeasurement - measuredValue (temperature):', parsedValue, '+ temperature offset', temperatureOffset);
+      this.setCapabilityValue('measure_temperature', parsedValue + temperatureOffset);
+    }
+  }
 
-	onHumidityReport(value) {
-		const parsedValue = this.getSetting('humidity_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
-		this.log('msRelativeHumidity - measuredValue (humidity):', parsedValue);
-		this.setCapabilityValue('measure_humidity', parsedValue);
-	}
+  onHumidityReport(value) {
+    const humidityOffset = this.getSetting('humidity_offset') || 0;
+    const parsedValue = this.getSetting('humidity_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
+    this.log('measure_humidity | msRelativeHumidity - measuredValue (humidity):', parsedValue, '+ humidity offset', humidityOffset);
+    this.setCapabilityValue('measure_humidity', parsedValue + humidityOffset);
+  }
 
-	onPressureReport(value) {
-		const parsedValue = Math.round((value / 100) * 10);
-		this.log('msPressureMeasurement - 16 (pressure):', parsedValue);
-		this.setCapabilityValue('measure_pressure', parsedValue);
-	}
+  onPressureReport(value) {
+    const pressureOffset = this.getSetting('pressure_offset') || 0;
+    const parsedValue = Math.round((value / 100) * 10);
+    this.log('measure_pressure | msPressureMeasurement - 16 (pressure):', parsedValue, '+ pressure offset', pressureOffset);
+    this.setCapabilityValue('measure_pressure', parsedValue + pressureOffset);
+  }
 
-	onLifelineReport(value) {
-		this._debug('lifeline report', new Buffer(value, 'ascii'));
+  onLifelineReport(value) {
+    this._debug('lifeline report', new Buffer(value, 'ascii'));
 
-		const parsedData = this.parseData(new Buffer(value, 'ascii'));
-		this._debug('parsedData', parsedData);
+    const parsedData = this.parseData(new Buffer(value, 'ascii'));
+    this._debug('parsedData', parsedData);
 
-		// battery reportParser (ID 1)
-		if (parsedData.hasOwnProperty('1')) {
-			const parsedVolts = parsedData['1'] / 1000;
-			const minVolts = 2.5;
-			const maxVolts = 3.0;
+    // battery reportParser (ID 1)
+    if (parsedData.hasOwnProperty('1')) {
+      const parsedVolts = parsedData['1'] / 1000;
+      const minVolts = 2.5;
+      const maxVolts = 3.0;
 
-			const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
-			this.log('lifeline - battery', parsedBatPct);
-			if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
-				// Set Battery capability
-				this.setCapabilityValue('measure_battery', parsedBatPct);
-				// Set Battery alarm if battery percentatge is below 20%
-				this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
-			}
-		}
+      const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
+      this.log('lifeline - battery', parsedBatPct);
+      if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
+        // Set Battery capability
+        this.setCapabilityValue('measure_battery', parsedBatPct);
+        // Set Battery alarm if battery percentatge is below 20%
+        this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
+      }
+    }
 
-		/* Disabled due to inaccurate reporting
+    /* Disabled due to inaccurate reporting
 		// temperature reportParser (ID 100)
 		if (parsedData.hasOwnProperty('100')) {
 			const parsedTemp = parsedData['100'] / 100.0;
@@ -109,7 +114,7 @@ class AqaraWeatherSensor extends ZigBeeDevice {
 
 		// pressure reportParser (ID 102) - reported number not reliable
 		*/
-	}
+  }
 
 }
 

@@ -33,5 +33,26 @@
     "large": "{{driverAssetsPath}}/images/large.png",
     "small": "{{driverAssetsPath}}/images/small.png"
   },
-  "settings": []
+  "settings": [{
+    "type": "group",
+    "label": {
+      "en": "Expert settings",
+      "nl": "Expert instellingen"
+    },
+    "collapsed": true,
+    "children": [
+      {
+        "id": "reverse_contact_alarm",
+        "type": "checkbox",
+        "value": false,
+        "label": {
+          "en": "Reverse contact alarm logic"
+        },
+        "hint": {
+          "en": "Reverse the contact alarm logic: magnet closed = alarm activated, magnet opened = alarm deactivated.",
+          "nl": "Keer de alarm logic om: magneet gesloten = alarm geactiveerd, magneet geopened = alarm gedeactiveerd."
+        }
+      }
+    ]
+  }]
 }

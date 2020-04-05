@@ -1,71 +1,69 @@
 'use strict';
 
+const { ZigBeeDevice } = require('homey-meshdriver');
 const util = require('./../../lib/util');
-const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
 
 class XiaomiTempSensor extends ZigBeeDevice {
-	onMeshInit() {
-		// enable debugging
-		// this.enableDebug();
 
-		// print the node's info to the console
-		// this.printNode();
+  onMeshInit() {
+    // enable debugging
+    // this.enableDebug();
 
-		//Link util parseData method to this devices instance
-		this.parseData = util.parseData.bind(this)
+    // print the node's info to the console
+    // this.printNode();
 
-		// Register the AttributeReportListener for measure_temperature
-		this._attrReportListeners['0_msTemperatureMeasurement'] = this._attrReportListeners['0_msTemperatureMeasurement'] || {};
-		this._attrReportListeners['0_msTemperatureMeasurement']['measuredValue'] =
-			this.onTemperatureReport.bind(this);
+    // Link util parseData method to this devices instance
+    this.parseData = util.parseData.bind(this);
 
-		// Register the AttributeReportListener for measure_humidity
-		this._attrReportListeners['0_msRelativeHumidity'] = this._attrReportListeners['0_msRelativeHumidity'] || {};
-		this._attrReportListeners['0_msRelativeHumidity']['measuredValue'] =
-			this.onHumidityReport.bind(this);
+    // Register the AttributeReportListener for measure_temperature
+    this._attrReportListeners['0_msTemperatureMeasurement'] = this._attrReportListeners['0_msTemperatureMeasurement'] || {};
+    this._attrReportListeners['0_msTemperatureMeasurement']['measuredValue'] =			this.onTemperatureReport.bind(this);
 
-		this._attrReportListeners['0_genBasic'] = this._attrReportListeners['0_genBasic'] || {};
-		this._attrReportListeners['0_genBasic']['65281'] =
-			this.onLifelineReport.bind(this);
+    // Register the AttributeReportListener for measure_humidity
+    this._attrReportListeners['0_msRelativeHumidity'] = this._attrReportListeners['0_msRelativeHumidity'] || {};
+    this._attrReportListeners['0_msRelativeHumidity']['measuredValue'] =			this.onHumidityReport.bind(this);
 
-	}
+    this._attrReportListeners['0_genBasic'] = this._attrReportListeners['0_genBasic'] || {};
+    this._attrReportListeners['0_genBasic']['65281'] =			this.onLifelineReport.bind(this);
+  }
 
-	onTemperatureReport(value) {
-		const parsedValue = this.getSetting('temperature_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
-		const temperatureOffset = this.getSetting('temperature_offset') || 0;
-		this.log('msTemperatureMeasurement - measuredValue (temperature):', parsedValue, '+ temperature offset', temperatureOffset);
-		this.setCapabilityValue('measure_temperature', parsedValue + temperatureOffset);
-	}
+  onTemperatureReport(value) {
+    const parsedValue = this.getSetting('temperature_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
+    const temperatureOffset = this.getSetting('temperature_offset') || 0;
+    this.log('msTemperatureMeasurement - measuredValue (temperature):', parsedValue, '+ temperature offset', temperatureOffset);
+    this.setCapabilityValue('measure_temperature', parsedValue + temperatureOffset);
+  }
 
-	onHumidityReport(value) {
-		const parsedValue = this.getSetting('humidity_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
-		this.log('msRelativeHumidity - measuredValue (humidity):', parsedValue);
-		this.setCapabilityValue('measure_humidity', parsedValue);
-	}
+  onHumidityReport(value) {
+    const humidityOffset = this.getSetting('humidity_offset') || 0;
+    const parsedValue = this.getSetting('humidity_decimals') === '2' ? Math.round((value / 100) * 100) / 100 : Math.round((value / 100) * 10) / 10;
+    this.log('msRelativeHumidity - measuredValue (humidity):', parsedValue, '+ humidity offset', humidityOffset);
+    this.setCapabilityValue('measure_humidity', parsedValue + humidityOffset);
+  }
 
-	onLifelineReport(value) {
-		this._debug('lifeline report', new Buffer(value, 'ascii'));
+  onLifelineReport(value) {
+    this._debug('lifeline report', new Buffer(value, 'ascii'));
 
-		const parsedData = this.parseData(new Buffer(value, 'ascii'));
-		this._debug('parsedData', parsedData);
+    const parsedData = this.parseData(new Buffer(value, 'ascii'));
+    this._debug('parsedData', parsedData);
 
-		// battery reportParser (ID 1)
-		if (parsedData.hasOwnProperty('1')) {
-			const parsedVolts = parsedData['1'] / 1000;
-			const minVolts = 2.5;
-			const maxVolts = 3.0;
+    // battery reportParser (ID 1)
+    if (parsedData.hasOwnProperty('1')) {
+      const parsedVolts = parsedData['1'] / 1000;
+      const minVolts = 2.5;
+      const maxVolts = 3.0;
 
-			const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
-			this.log('lifeline - battery', parsedBatPct);
-			if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
-				// Set Battery capability
-				this.setCapabilityValue('measure_battery', parsedBatPct);
-				// Set Battery alarm if battery percentatge is below 20%
-				this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
-			}
-		}
+      const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
+      this.log('lifeline - battery', parsedBatPct);
+      if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
+        // Set Battery capability
+        this.setCapabilityValue('measure_battery', parsedBatPct);
+        // Set Battery alarm if battery percentatge is below 20%
+        this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
+      }
+    }
 
-		/* Disabled due to inaccurate reporting
+    /* Disabled due to inaccurate reporting
 		// temperature reportParser (ID 100)
 		if (parsedData.hasOwnProperty('100')) {
 			const parsedTemp = parsedData['100'] / 100.0;
@@ -81,7 +79,7 @@ class XiaomiTempSensor extends ZigBeeDevice {
 			this.setCapabilityValue('measure_humidity', parsedHum);
 		}
 		*/
-	}
+  }
 
 }
 

@@ -1,29 +1,30 @@
 'use strict';
 
+<<<<<<< HEAD
 const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
 const Homey = require('homey');
+=======
+const { ZigBeeDevice } = require('homey-meshdriver');
+>>>>>>> upstream/master
 
 class XiaomiDoorWindowSensor extends ZigBeeDevice {
-	onMeshInit() {
-		// enable debugging
-		// this.enableDebug();
 
-		// print the node's info to the console
-		// this.printNode();
+  onMeshInit() {
+    // enable debugging
+    // this.enableDebug();
 
-		// Listen for attribute changes on the genOnOff cluster
-		this.registerAttrReportListener('genOnOff', 'onOff', 1, 60, null,
-				this.onContactReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - genOnOff - Contact', err);
-			});
+    // print the node's info to the console
+    // this.printNode();
 
-		this.registerAttrReportListener('genBasic', '65281', 1, 60, null, data => {
-			this.log('65281', data);
-		}, 0);
-	}
+    // Listen for attribute changes on the genOnOff cluster
+    this.registerAttrReportListener('genOnOff', 'onOff', 1, 60, null,
+      this.onContactReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - genOnOff - Contact', err);
+      });
 
+<<<<<<< HEAD
 	onContactReport(data) {
 		this.log(`alarm_contact -> ${data === 1}`);
 		
@@ -35,6 +36,19 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
 		.catch( this.error )
 		.then( this.log )
 	}
+=======
+    this.registerAttrReportListener('genBasic', '65281', 1, 60, null, data => {
+      this.log('65281', data);
+    }, 0);
+  }
+
+  onContactReport(data) {
+    const reverseAlarmLogic = this.getSetting('reverse_contact_alarm') || false;
+    const parsedData = !reverseAlarmLogic ? data === 1 : data === 0;
+    this.log(`alarm_contact -> ${parsedData}`);
+    this.setCapabilityValue('alarm_contact', parsedData);
+  }
+>>>>>>> upstream/master
 
 }
 

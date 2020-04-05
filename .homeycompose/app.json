@@ -10,8 +10,8 @@
   "category": [
     "lights"
   ],
-  "version": "0.7.1",
-  "compatibility": ">=3.0.0",
+  "version": "0.8.0",
+  "compatibility": ">=4.0.0",
   "athomForumDiscussionId": 4120,
   "homeyCommunityTopicId": 156,
   "sdk": 2,

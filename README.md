@@ -18,6 +18,8 @@ This app adds support for the Zigbee Smart Home devices made by [Aqara](https://
 * Wireless switch (WXKG01LM) (1x - 4x click, Key Held, Key released)  
 * Temperature/Humidity Sensor (WSDCGQ01LM) (temperature, relative humidity, battery level)
 * Smart socket plug ZigBee edition (ZNCZ02LM)] (onoff, measure_power, meter_power, measure_voltage)
+* Xiaomi Smart plug (EU) (ZNCZ04LM)] (onoff, measure_power, meter_power)   
+* Xiaomi Light Sensor (GZCGQ01LM) (measure_luminance, measure_batery)
 
 ### Aqara devices   
 * [Aqara Curtain Controller (Zigbee) (ZNCLDJ11LM)](https://www.aqara.com/en/curtain_controller-product.html) (open, close, idle, setpoint (100% = open, 0% = closed))
@@ -33,6 +35,7 @@ This app adds support for the Zigbee Smart Home devices made by [Aqara](https://
 * [Aqara Vibration Sensor (DJT11LM)](https://www.aqara.com/en/vibration_sensor-product.html) (tilt-, vibration-, drop-motion, tilt angles (to reference plane), tilt angles (to previous position), vibration strength, tilt-, vibration-, drop-alarm, battery level)      
 * [Aqara Tunable LED Bulb (ZNLDP12LM)](https://www.aqara.com/cn/led_light.html) (onoff, dim, light_temperature)     
 * [Aqara Double Relay (LLKZMK11LM)](https://www.aqara.com/) (onoff, measure_power)   
+* [Aqara Smart EU plug (SP-EUC01)](https://www.aqara.com/) (onoff, measure_power, meter_power)   
 
   **Note:**   
   The following devices are sold under the same model number (e.g. WXKG11LM), but have different capabilities.
@@ -65,6 +68,13 @@ Any requests please post them in the [Aqara & Xiaomi Zigbee topic on the Athom C
 Please report issues at the [issues section on Github](https://github.com/TedTolboom/com.xiaomi-mi-zigbee/issues) otherwise in the above mentioned topic.     
 
 ## Change Log:
+
+### v 0.8.0
+* Add support for [Aqara Smart EU plug (SP-EUC01)](https://www.aqara.com/) (onoff, measure_power, meter_power)   
+* Xiaomi Smart plug (EU) (ZNCZ04LM)] (onoff, measure_power, meter_power)   
+* Xiaomi Light Sensor (GZCGQ01LM) (measure_luminance, measure_batery)
+* Add humidity and pressure offset settings for the [Aqara Temperature and Humidity Sensor (WSDCGQ11LM)](https://www.aqara.com/en/temperature_and_humidity_sensor-product.html) and Temperature/Humidity Sensor (WSDCGQ01LM)
+* Add reverse contact alarm logic for [Aqara Door and Window Sensor (MCCGQ11LM)](https://www.aqara.com/en/door_and_window_sensor-product.html) and Door/Window sensor (MCCGQ01LM)
 
 ### v 0.7.1
 * Fix issue with Aqara Cube trigger cards not showing argument fields   

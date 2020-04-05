@@ -1,0 +1,94 @@
+{
+  "name": {
+    "en": "Xiaomi Light Sensor"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "measure_luminance",
+    "alarm_battery",
+    "measure_battery"
+  ],
+  "energy": {
+    "batteries": [
+      "CR2032"
+    ]
+  },
+  "zigbee": {
+    "manufacturerName": "LUMI",
+    "productId": "lumi.sen_ill.mgl01",
+    "deviceId": [
+      262
+    ],
+    "profileId": 260,
+    "learnmode": {
+      "image": "{{driverAssetsPath}}/learn_human_body.svg",
+      "instruction": {
+        "en": "Long press the reset button for more than 5 seconds until the blue light flashes three times",
+        "nl": "Houd de reset knop ingedrukt voor meer dan 5 seconden totdat de blauwe led drie keer knippert",
+        "de": "Halte den Reset Knopf mehr als 3 Sekunden bis das blaue Licht 3 mal blinkt"
+      }
+    }
+  },
+  "images": {
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "small": "{{driverAssetsPath}}/images/small.png"
+  },
+  "settings": [
+    {
+      "id": "alarm_motion_reset_window",
+      "type": "number",
+      "label": {
+        "en": "Disable motion alarm after",
+        "nl": "Schakel bewegingsalarm uit na"
+      },
+      "hint": {
+        "en": "This setting will disable the motion alarm after the given time (in seconds) has expired. Every time motion is observed by the device it will reset this timeout.\nRange: 60 - 86400, default: 300 [s]",
+        "nl": "Deze instelling zal het bewegingsalarm uitschakelen na de tijd (in seconden) is verstreken. Elke keer dat opnieuw beweging wordt gedetecteerd wordt deze timer herstart.\nBereik: 60 - 86400, Standaard: 300 [s]"
+      },
+      "value": 300,
+      "attr": {
+        "min": 60,
+        "max": 86400
+      }
+    },
+    {
+      "id": "battery_threshold",
+      "type": "number",
+      "label": {
+        "en": "Battery alarm threshold (%)",
+        "nl": "Batterij alarm waarde (%)"
+      },
+      "hint": {
+        "en": "Battery level (%) below which the battery alarm will be activated.\nRange: 1 - 90, \ndefault: 20 [%]",
+        "nl": "Battery niveau (%) waarbij het batterij alarm geactiveerd wordt.\nBereik: 1 - 90, \nstandaard: 20 [%]"
+      },
+      "value": 20,
+      "attr": {
+        "min": 1,
+        "max": 90
+      }
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Expert settings",
+        "nl": "Expert instellingen"
+      },
+      "collapsed": true,
+      "children": [
+        {
+          "id": "hacked_alarm_motion_reset_window",
+          "type": "checkbox",
+          "value": false,
+          "label": {
+            "en": "Hacked sensor"
+          },
+          "hint": {
+            "en": "By soldering two contact points on the PCB it's possible to reduce the motion blind time to 5 seconds instead of the minimum 60 seconds. Enabling this setting will allow you to override the minimum of 60 seconds for cancelling the alarm and will set it to 5 seconds.",
+            "nl": "Door twee contactpunten op de printplaat te solderen is het mogelijk om de blindtijd van de sensor terug te brengen naar 5 seconden. Inschakelen van deze instelling maakt het mogelijk om de instelling voor het annuleren van de bewegingsmelder te overschrijven tot 5 seconden."
+          }
+        }
+      ]
+    }
+  ]
+}

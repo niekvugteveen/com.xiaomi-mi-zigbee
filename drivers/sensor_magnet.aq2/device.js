@@ -1,71 +1,77 @@
-//lifeline validated
+// lifeline validated
+
 'use strict';
 
+const { ZigBeeDevice } = require('homey-meshdriver');
 const util = require('./../../lib/util');
-const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
 
 class AqaraDoorWindowSensor extends ZigBeeDevice {
-	onMeshInit() {
-		// enable debugging
-		// this.enableDebug();
 
-		// print the node's info to the console
-		// this.printNode();
+  onMeshInit() {
+    // enable debugging
+    // this.enableDebug();
 
-		//Link util parseData method to this devices instance
-		this.parseData = util.parseData.bind(this)
+    // print the node's info to the console
+    // this.printNode();
 
-		// Listen for attribute changes on the genOnOff cluster
-		this.registerAttrReportListener('genOnOff', 'onOff', 1, 60, null,
-				this.onContactReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - genOnOff - Contact', err);
-			});
+    // Link util parseData method to this devices instance
+    this.parseData = util.parseData.bind(this);
 
-		// Register the AttributeReportListener - Lifeline
-		this.registerAttrReportListener('genBasic', '65281', 1, 60, null,
-				this.onLifelineReport.bind(this), 0)
-			.catch(err => {
-				// Registering attr reporting failed
-				this.error('failed to register attr report listener - genBasic - Lifeline', err);
-			});
-	}
+    // Listen for attribute changes on the genOnOff cluster
+    this.registerAttrReportListener('genOnOff', 'onOff', 1, 60, null,
+      this.onContactReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - genOnOff - Contact', err);
+      });
 
-	onContactReport(data) {
-		this.log(`alarm_contact -> ${data === 1}`);
-		this.setCapabilityValue('alarm_contact', data === 1);
-	}
+    // Register the AttributeReportListener - Lifeline
+    this.registerAttrReportListener('genBasic', '65281', 1, 60, null,
+      this.onLifelineReport.bind(this), 0)
+      .catch(err => {
+        // Registering attr reporting failed
+        this.error('failed to register attr report listener - genBasic - Lifeline', err);
+      });
+  }
 
-	onLifelineReport(value) {
-		this._debug('lifeline report', new Buffer(value, 'ascii'));
+  onContactReport(data) {
+    const reverseAlarmLogic = this.getSetting('reverse_contact_alarm') || false;
+    const parsedData = !reverseAlarmLogic ? data === 1 : data === 0;
+    this.log(`alarm_contact -> ${parsedData}`);
+    this.setCapabilityValue('alarm_contact', parsedData);
+  }
 
-		const parsedData = this.parseData(new Buffer(value, 'ascii'));
-		this._debug('parsedData', parsedData);
+  onLifelineReport(value) {
+    this._debug('lifeline report', new Buffer(value, 'ascii'));
 
-		// battery reportParser (ID 1)
-		if (parsedData.hasOwnProperty('1')) {
-			const parsedVolts = parsedData['1'] / 1000;
-			const minVolts = 2.5;
-			const maxVolts = 3.0;
+    const parsedData = this.parseData(new Buffer(value, 'ascii'));
+    this._debug('parsedData', parsedData);
 
-			const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
-			this.log('lifeline - battery', parsedBatPct);
-			if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
-				// Set Battery capability
-				this.setCapabilityValue('measure_battery', parsedBatPct);
-				// Set Battery alarm if battery percentatge is below 20%
-				this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
-			}
-		}
+    // battery reportParser (ID 1)
+    if (parsedData.hasOwnProperty('1')) {
+      const parsedVolts = parsedData['1'] / 1000;
+      const minVolts = 2.5;
+      const maxVolts = 3.0;
 
-		// contact alarm reportParser (ID 100)
-		if (parsedData.hasOwnProperty('100')) {
-			const parsedContact = (parsedData['100'] === 1);
-			this.log('lifeline - contact alarm', parsedContact);
-			this.setCapabilityValue('alarm_contact', parsedContact);
-		}
-	}
+      const parsedBatPct = Math.min(100, Math.round((parsedVolts - minVolts) / (maxVolts - minVolts) * 100));
+      this.log('lifeline - battery', parsedBatPct);
+      if (this.hasCapability('measure_battery') && this.hasCapability('alarm_battery')) {
+        // Set Battery capability
+        this.setCapabilityValue('measure_battery', parsedBatPct);
+        // Set Battery alarm if battery percentatge is below 20%
+        this.setCapabilityValue('alarm_battery', parsedBatPct < (this.getSetting('battery_threshold') || 20));
+      }
+    }
+
+    // contact alarm reportParser (ID 100)
+    if (parsedData.hasOwnProperty('100')) {
+      const reverseAlarmLogic = this.getSetting('reverse_contact_alarm') || false;
+      const parsedContact = !reverseAlarmLogic ? (parsedData['100'] === 1) : (parsedData['100'] === 0);
+      this.log('lifeline - contact alarm', parsedContact);
+      this.setCapabilityValue('alarm_contact', parsedContact);
+    }
+  }
+
 }
 
 module.exports = AqaraDoorWindowSensor;

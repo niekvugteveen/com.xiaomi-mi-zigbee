@@ -10,8 +10,8 @@
   "category": [
     "lights"
   ],
-  "version": "0.7.1",
-  "compatibility": ">=3.0.0",
+  "version": "0.8.0",
+  "compatibility": ">=4.0.0",
   "athomForumDiscussionId": 4120,
   "homeyCommunityTopicId": 156,
   "sdk": 2,
@@ -1598,6 +1598,78 @@
     },
     {
       "name": {
+        "en": "Aqara Smart plug (EU)"
+      },
+      "class": "socket",
+      "capabilities": [
+        "onoff",
+        "measure_power",
+        "meter_power"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "approximated": true
+        }
+      },
+      "zigbee": {
+        "manufacturerName": "LUMI",
+        "productId": "lumi.plug.maeu01",
+        "deviceId": 81,
+        "profileId": 260,
+        "learnmode": {
+          "image": "/drivers/plug.maeu01/assets/learn.svg",
+          "instruction": {
+            "en": "Long press the power button to open more than 5 seconds until the led flashes red one time and then flashes blue three times",
+            "nl": "Long press the power button to open more than 5 seconds until the led flashes red one time and then flashes blue three times",
+            "de": "Drücke den Power Knopf mehr als 5 Sekunden und lasse ihn los sobald das rote Licht einmal blinkt. Danach blinkt das blaue Licht zwei mal."
+          }
+        }
+      },
+      "images": {
+        "large": "/drivers/plug.maeu01/assets/images/large.png",
+        "small": "/drivers/plug.maeu01/assets/images/small.png"
+      },
+      "settings": [],
+      "id": "plug.maeu01"
+    },
+    {
+      "name": {
+        "en": "Xiaomi Smart plug (EU)"
+      },
+      "class": "socket",
+      "capabilities": [
+        "onoff",
+        "measure_power",
+        "meter_power"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "approximated": true
+        }
+      },
+      "zigbee": {
+        "manufacturerName": "LUMI",
+        "productId": "lumi.plug.mmeu01",
+        "deviceId": 81,
+        "profileId": 260,
+        "learnmode": {
+          "image": "/drivers/plug.mmeu01/assets/learn.svg",
+          "instruction": {
+            "en": "Long press the power button to open more than 5 seconds until the led flashes red one time and then flashes blue three times",
+            "nl": "Long press the power button to open more than 5 seconds until the led flashes red one time and then flashes blue three times",
+            "de": "Drücke den Power Knopf mehr als 5 Sekunden und lasse ihn los sobald das rote Licht einmal blinkt. Danach blinkt das blaue Licht zwei mal."
+          }
+        }
+      },
+      "images": {
+        "large": "/drivers/plug.mmeu01/assets/images/large.png",
+        "small": "/drivers/plug.mmeu01/assets/images/small.png"
+      },
+      "settings": [],
+      "id": "plug.mmeu01"
+    },
+    {
+      "name": {
         "en": "Aqara Double Relay",
         "nl": "Aqara Double Relay",
         "de": "Aqara Double Relay"
@@ -1771,6 +1843,101 @@
     },
     {
       "name": {
+        "en": "Xiaomi Light Sensor"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "measure_luminance",
+        "alarm_battery",
+        "measure_battery"
+      ],
+      "energy": {
+        "batteries": [
+          "CR2032"
+        ]
+      },
+      "zigbee": {
+        "manufacturerName": "LUMI",
+        "productId": "lumi.sen_ill.mgl01",
+        "deviceId": [
+          262
+        ],
+        "profileId": 260,
+        "learnmode": {
+          "image": "/drivers/sen_ill.mgl01/assets/learn_human_body.svg",
+          "instruction": {
+            "en": "Long press the reset button for more than 5 seconds until the blue light flashes three times",
+            "nl": "Houd de reset knop ingedrukt voor meer dan 5 seconden totdat de blauwe led drie keer knippert",
+            "de": "Halte den Reset Knopf mehr als 3 Sekunden bis das blaue Licht 3 mal blinkt"
+          }
+        }
+      },
+      "images": {
+        "large": "/drivers/sen_ill.mgl01/assets/images/large.png",
+        "small": "/drivers/sen_ill.mgl01/assets/images/small.png"
+      },
+      "settings": [
+        {
+          "id": "alarm_motion_reset_window",
+          "type": "number",
+          "label": {
+            "en": "Disable motion alarm after",
+            "nl": "Schakel bewegingsalarm uit na"
+          },
+          "hint": {
+            "en": "This setting will disable the motion alarm after the given time (in seconds) has expired. Every time motion is observed by the device it will reset this timeout.\nRange: 60 - 86400, default: 300 [s]",
+            "nl": "Deze instelling zal het bewegingsalarm uitschakelen na de tijd (in seconden) is verstreken. Elke keer dat opnieuw beweging wordt gedetecteerd wordt deze timer herstart.\nBereik: 60 - 86400, Standaard: 300 [s]"
+          },
+          "value": 300,
+          "attr": {
+            "min": 60,
+            "max": 86400
+          }
+        },
+        {
+          "id": "battery_threshold",
+          "type": "number",
+          "label": {
+            "en": "Battery alarm threshold (%)",
+            "nl": "Batterij alarm waarde (%)"
+          },
+          "hint": {
+            "en": "Battery level (%) below which the battery alarm will be activated.\nRange: 1 - 90, \ndefault: 20 [%]",
+            "nl": "Battery niveau (%) waarbij het batterij alarm geactiveerd wordt.\nBereik: 1 - 90, \nstandaard: 20 [%]"
+          },
+          "value": 20,
+          "attr": {
+            "min": 1,
+            "max": 90
+          }
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Expert settings",
+            "nl": "Expert instellingen"
+          },
+          "collapsed": true,
+          "children": [
+            {
+              "id": "hacked_alarm_motion_reset_window",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Hacked sensor"
+              },
+              "hint": {
+                "en": "By soldering two contact points on the PCB it's possible to reduce the motion blind time to 5 seconds instead of the minimum 60 seconds. Enabling this setting will allow you to override the minimum of 60 seconds for cancelling the alarm and will set it to 5 seconds.",
+                "nl": "Door twee contactpunten op de printplaat te solderen is het mogelijk om de blindtijd van de sensor terug te brengen naar 5 seconden. Inschakelen van deze instelling maakt het mogelijk om de instelling voor het annuleren van de bewegingsmelder te overschrijven tot 5 seconden."
+              }
+            }
+          ]
+        }
+      ],
+      "id": "sen_ill.mgl01"
+    },
+    {
+      "name": {
         "en": "Temperature/Humidity sensor",
         "nl": "Temperature/Humidity sensor"
       },
@@ -1846,6 +2013,28 @@
               }
             }
           ]
+        },
+        {
+          "id": "humidity_offset",
+          "type": "number",
+          "label": {
+            "en": "Humidity offset (%)",
+            "nl": "Luchtvochtigheids compensatie (%)"
+          },
+          "hint": {
+            "en": "Set a correction to compensate a humidity offset.\nRange: -10 - 10, step size 1, \ndefault: 0 [%]",
+            "nl": "Stel een correctiewaarde in om een Luchtvochtigheids verschil te compenseren.\nBereik: -10 - 10, stap grootte 1, \nstandaard: 0 [%]"
+          },
+          "value": 0,
+          "attr": {
+            "min": -10,
+            "max": 10,
+            "step": 1
+          },
+          "units": {
+            "en": "%",
+            "nl": "%"
+          }
         },
         {
           "id": "humidity_decimals",
@@ -1992,7 +2181,30 @@
         "large": "/drivers/sensor_magnet/assets/images/large.png",
         "small": "/drivers/sensor_magnet/assets/images/small.png"
       },
-      "settings": [],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Expert settings",
+            "nl": "Expert instellingen"
+          },
+          "collapsed": true,
+          "children": [
+            {
+              "id": "reverse_contact_alarm",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Reverse contact alarm logic"
+              },
+              "hint": {
+                "en": "Reverse the contact alarm logic: magnet closed = alarm activated, magnet opened = alarm deactivated.",
+                "nl": "Keer de alarm logic om: magneet gesloten = alarm geactiveerd, magneet geopened = alarm gedeactiveerd."
+              }
+            }
+          ]
+        }
+      ],
       "id": "sensor_magnet"
     },
     {
@@ -2045,6 +2257,28 @@
             "min": 1,
             "max": 90
           }
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Expert settings",
+            "nl": "Expert instellingen"
+          },
+          "collapsed": true,
+          "children": [
+            {
+              "id": "reverse_contact_alarm",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Reverse contact alarm logic"
+              },
+              "hint": {
+                "en": "Reverse the contact alarm logic: magnet closed = alarm activated, magnet opened = alarm deactivated.",
+                "nl": "Keer de alarm logic om: magneet gesloten = alarm geactiveerd, magneet geopened = alarm gedeactiveerd."
+              }
+            }
+          ]
         }
       ],
       "id": "sensor_magnet.aq2"
@@ -2613,6 +2847,10 @@
             "min": -10,
             "max": 10,
             "step": 0.1
+          },
+          "units": {
+            "en": "°C",
+            "nl": "°C"
           }
         },
         {
@@ -2638,6 +2876,28 @@
           ]
         },
         {
+          "id": "humidity_offset",
+          "type": "number",
+          "label": {
+            "en": "Humidity offset (%)",
+            "nl": "Luchtvochtigheids compensatie (%)"
+          },
+          "hint": {
+            "en": "Set a correction to compensate a humidity offset.\nRange: -10 - 10, step size 1, \ndefault: 0 [%]",
+            "nl": "Stel een correctiewaarde in om een Luchtvochtigheids verschil te compenseren.\nBereik: -10 - 10, stap grootte 1, \nstandaard: 0 [%]"
+          },
+          "value": 0,
+          "attr": {
+            "min": -10,
+            "max": 10,
+            "step": 1
+          },
+          "units": {
+            "en": "%",
+            "nl": "%"
+          }
+        },
+        {
           "id": "humidity_decimals",
           "type": "radio",
           "label": {
@@ -2658,6 +2918,28 @@
               }
             }
           ]
+        },
+        {
+          "id": "pressure_offset",
+          "type": "number",
+          "label": {
+            "en": "Pressure offset (mbar)",
+            "nl": "Druk compensatie (mbar)"
+          },
+          "hint": {
+            "en": "Set a correction to compensate a pressure offset.\nRange: -100 - 100, step size 1, \ndefault: 0 [mbar]",
+            "nl": "Stel een correctiewaarde in om een druk verschil te compenseren.\nBereik: -100 - 100, stap grootte 1, \nstandaard: 0 [mbar]"
+          },
+          "value": 0,
+          "attr": {
+            "min": -100,
+            "max": 100,
+            "step": 1
+          },
+          "units": {
+            "en": "mbar",
+            "nl": "mbar"
+          }
         },
         {
           "id": "battery_threshold",
