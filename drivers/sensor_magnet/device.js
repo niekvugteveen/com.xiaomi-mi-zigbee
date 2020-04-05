@@ -1,11 +1,8 @@
 'use strict';
 
-<<<<<<< HEAD
 const ZigBeeDevice = require('homey-meshdriver').ZigBeeDevice;
 const Homey = require('homey');
-=======
-const { ZigBeeDevice } = require('homey-meshdriver');
->>>>>>> upstream/master
+
 
 class XiaomiDoorWindowSensor extends ZigBeeDevice {
 
@@ -24,19 +21,19 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
         this.error('failed to register attr report listener - genOnOff - Contact', err);
       });
 
-<<<<<<< HEAD
-	onContactReport(data) {
-		this.log(`alarm_contact -> ${data === 1}`);
-		
-		this.setCapabilityValue('alarm_contact', data === 1);
-		let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
-		changeStateTrigger
-		.register()
-		.trigger(this)
-		.catch( this.error )
-		.then( this.log )
-	}
-=======
+  	onContactReport(data) {
+  		this.log(`alarm_contact -> ${data === 1}`);
+
+      // liste for contactalarm on/off event
+  		this.setCapabilityValue('alarm_contact', data === 1);
+  		let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
+  		changeStateTrigger
+  		.register()
+  		.trigger(this)
+  		.catch( this.error )
+  		.then( this.log )
+  	}
+
     this.registerAttrReportListener('genBasic', '65281', 1, 60, null, data => {
       this.log('65281', data);
     }, 0);
@@ -48,8 +45,6 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
     this.log(`alarm_contact -> ${parsedData}`);
     this.setCapabilityValue('alarm_contact', parsedData);
   }
->>>>>>> upstream/master
-
 }
 
 module.exports = XiaomiDoorWindowSensor;
