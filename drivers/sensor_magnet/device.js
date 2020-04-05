@@ -1,6 +1,7 @@
 'use strict';
 
 const { ZigBeeDevice } = require('homey-meshdriver');
+const Homey = require('homey');
 
 class XiaomiDoorWindowSensor extends ZigBeeDevice {
 
