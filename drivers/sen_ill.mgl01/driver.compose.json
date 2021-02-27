@@ -14,7 +14,7 @@
     ]
   },
   "zigbee": {
-    "manufacturerName": "LUMI",
+    "manufacturerName": ["LUMI", "XIAOMI"],
     "productId": "lumi.sen_ill.mgl01",
     "deviceId": [
       262
