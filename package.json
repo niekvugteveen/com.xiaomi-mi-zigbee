@@ -5,6 +5,7 @@
 	"main": "app.js",
 	"dependencies": {
 		"git-branch": "^1.0.0",
+		"homey-meshdriver": "^2.0.2",
 		"homey-zigbeedriver": "^1.6.2",
 		"homey-zwavedriver": "^1.0.3",
 		"zigbee-clusters": "^1.4.0"
