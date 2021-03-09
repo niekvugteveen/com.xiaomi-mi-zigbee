@@ -6,7 +6,6 @@ const { ZigBeeDevice } = require('homey-zigbeedriver');
 const { debug, Cluster, CLUSTER } = require('zigbee-clusters');
 
 const XiaomiBasicCluster = require('../../lib/XiaomiBasicCluster');
-const Homey = require('homey');
 
 Cluster.addCluster(XiaomiBasicCluster);
 
@@ -50,12 +49,12 @@ class XiaomiDoorWindowSensor extends ZigBeeDevice {
     this.setCapabilityValue('alarm_contact', parsedData).catch(this.error);
 
     /* custom event NV */
-    let changeStateTrigger = new Homey.FlowCardTriggerDevice('alarm_state_changed');
-    changeStateTrigger
-    .register()
-    .trigger(this)
-    .catch( this.error )
-    .then( this.log )
+    this.triggerFlow({
+      id: 'alarm_state_changed',
+      tokens: {},
+      state: null,
+    })
+    .catch(err => this.error('Error triggering alarm_state_changed', err));
   }
 
   /**
